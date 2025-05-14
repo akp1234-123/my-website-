@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📚 StudyAKP - Best Free Class 9 to 12 Study Material</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-500 to-indigo-800 text-white font-sans">
+
+  <!-- Header -->
+  <header class="bg-blue-600 text-white p-6 text-center text-4xl font-bold shadow-md rounded-b-lg">
+    📚 StudyAKP - Best Free Class 9 to 12 Study Material
+  </header>
+
+  <!-- Main Content -->
+  <main class="p-8 max-w-6xl mx-auto mt-10">
+    <h2 class="text-3xl font-semibold mb-6 text-center text-white">Choose Your Batch</h2>
+
+    <!-- Batch Selection -->
+    <div id="batchSelection" class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+      <div onclick="showClasses('pw')" class="cursor-pointer bg-white text-blue-600 rounded-xl shadow-2xl p-8 flex flex-col items-center justify-center hover:bg-blue-50 transform hover:scale-105 transition duration-300">
+        <img src="C:\Users\Dell\Desktop\Ihg58uVS1eLge90mN1UY_image.webp" alt="PW Logo" class="h-24 mb-4 rounded-md shadow-md">
+        <span class="text-2xl font-semibold text-center">PW Batch</span>
+      </div>
+      <div onclick="showClasses('topper')" class="cursor-pointer bg-white text-green-600 rounded-xl shadow-2xl p-8 flex flex-col items-center justify-center hover:bg-green-50 transform hover:scale-105 transition duration-300">
+        <img src="C:\Users\Dell\Desktop\next-toppers-icon-filled-256.webp" alt="Topper Logo" class="h-24 mb-4 rounded-md shadow-md">
+        <span class="text-2xl font-semibold text-center">Topper Batch</span>
+      </div>
+    </div>
+
+
+    <!-- Batch List Display -->
+    <div id="batchDisplay" class="mt-10 hidden">
+      <h3 id="batchTitle" class="text-2xl font-bold mb-4 text-center"></h3>
+      <div id="batchList" class="grid grid-cols-1 sm:grid-cols-2 gap-8 text-center"></div>
+      <button onclick="goBackToBatchSelection()" class="bg-red-600 text-white px-6 py-3 rounded-lg mt-4">Back</button>
+    </div>
+
+    <!-- Subject List Display -->
+    <div id="subjectDisplay" class="mt-10 hidden">
+      <h3 id="subjectTitle" class="text-2xl font-bold mb-4 text-center"></h3>
+      <div id="subjectList" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 text-center"></div>
+      <button onclick="goBackToBatchDisplay()" class="bg-red-600 text-white px-6 py-3 rounded-lg mt-4">Back</button>
+    </div>
+
+    <!-- Category Display -->
+    <div id="categoryDisplay" class="mt-10 hidden">
+      <h3 id="categoryTitle" class="text-2xl font-bold mb-4 text-center"></h3>
+      <div id="categoryList" class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center"></div>
+      <button onclick="goBackToSubjectDisplay()" class="bg-red-600 text-white px-6 py-3 rounded-lg mt-4">Back</button>
+    </div>
+
+    <!-- Video Section -->
+    <div id="videoSection" class="mt-10 hidden">
+      <h3 class="text-2xl font-bold mb-4 text-center" id="sectionTitle">Resources</h3>
+      <input type="text" id="searchInput" placeholder="Search title..." class="w-full mb-6 p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" oninput="filterResources()" />
+      <div id="videoGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+      <button onclick="goBackToCategoryDisplay()" class="bg-red-600 text-white px-6 py-3 rounded-lg mt-4">Back</button>
+      <button onclick="resetSelection()" class="bg-yellow-600 text-white px-6 py-3 rounded-lg mt-4">Reset</button>
+    </div>
+  </main>
+
+  <script>
+    const videos = {
+      pw: {
+        "Class 9": { Maths: { Video: [], Notes: [], DPP: [], "DPP Solution": [] }, Science: { Video: [], Notes: [], DPP: [], "DPP Solution": [] } },
+        "Class 10": { Maths: { Video: [], Notes: [], DPP: [], "DPP Solution": [] }, Science: { Video: [], Notes: [], DPP: [], "DPP Solution": [] } },
+        "Class 11": { Chemistry: { Video: [], Notes: [], DPP: [], "DPP Solution": [] } },
+        "Class 12": { Chemistry: { Video: [], Notes: [], DPP: [], "DPP Solution": [] } }
+      },
+      topper: {
+        "Class 9": { Maths: { Video: [], Notes: [], DPP: [], "DPP Solution": [] } },
+        "Class 10": {}, "Class 11": {}, "Class 12": {}
+      }
+    };
+videos['pw']['Class 9']['Science']['Video'].push({
+  title: "Chapter 2 Introduction",
+  thumbnail: "https://img.youtube.com/vi/XyXzKpAr9uM/hqdefault.jpg",
+ 
+  link: "https://www.youtube.com/embed/XyXzKpAr9uM"
+});
+
+    const batches = {
+      pw: ["Class 9", "Class 10", "Class 11", "Class 12"],
+      topper: ["Class 9", "Class 10", "Class 11", "Class 12"]
+    };
+
+    const subjects = {
+      "Class 9": ["Maths", "Science", "English", "SST"],
+      "Class 10": ["Maths", "Science", "English", "SST"],
+      "Class 11": ["Maths", "Physics", "Chemistry", "Biology"],
+      "Class 12": ["Maths", "Physics", "Chemistry", "Biology"]
+    };
+
+    const categories = ["Video", "Notes", "DPP", "DPP Solution"];
+    let selectedBatch = "", selectedClass = "", selectedSubject = "", selectedCategory = "", currentVideos = [];
+
+    function showClasses(type) {
+      selectedBatch = type;
+      document.getElementById("batchSelection").classList.add("hidden");
+      document.getElementById("batchDisplay").classList.remove("hidden");
+      document.getElementById("batchTitle").textContent = type === "pw" ? "PW Batch Classes" : "Next Topper Batch Classes";
+      const batchList = document.getElementById("batchList");
+      batchList.innerHTML = "";
+      batches[type].forEach(cls => {
+        const btn = document.createElement("button");
+        btn.textContent = cls;
+        btn.className = "bg-white text-blue-600 px-6 py-4 rounded-xl shadow-xl transform hover:scale-105 hover:bg-blue-50 transition duration-300 text-lg font-semibold";
+        btn.onclick = () => showSubjects(cls);
+        batchList.appendChild(btn);
+      });
+    }
+
+    function goBackToBatchSelection() {
+      document.getElementById("batchDisplay").classList.add("hidden");
+      document.getElementById("batchSelection").classList.remove("hidden");
+    }
+
+    function showSubjects(cls) {
+      selectedClass = cls;
+      document.getElementById("batchDisplay").classList.add("hidden");
+      document.getElementById("subjectDisplay").classList.remove("hidden");
+      document.getElementById("subjectTitle").textContent = `Subjects for ${cls}`;
+      const subjectList = document.getElementById("subjectList");
+      subjectList.innerHTML = "";
+      (subjects[cls] || []).forEach(sub => {
+        const btn = document.createElement("button");
+        btn.textContent = sub;
+        btn.className = "bg-white text-green-600 px-6 py-4 rounded-xl shadow-xl transform hover:scale-105 hover:bg-green-50 transition duration-300 text-lg font-semibold";
+        btn.onclick = () => showCategories(sub);
+        subjectList.appendChild(btn);
+      });
+    }
+
+    function goBackToBatchDisplay() {
+      document.getElementById("subjectDisplay").classList.add("hidden");
+      document.getElementById("batchDisplay").classList.remove("hidden");
+    }
+
+    function showCategories(sub) {
+      selectedSubject = sub;
+      document.getElementById("subjectDisplay").classList.add("hidden");
+      document.getElementById("categoryDisplay").classList.remove("hidden");
+      document.getElementById("categoryTitle").textContent = `Categories for ${selectedClass} - ${sub}`;
+      const categoryList = document.getElementById("categoryList");
+      categoryList.innerHTML = "";
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.textContent = cat;
+        btn.className = "bg-white text-blue-600 px-6 py-4 rounded-xl shadow-xl transform hover:scale-105 hover:bg-blue-50 transition duration-300 text-lg font-semibold";
+        btn.onclick = () => showVideos(cat);
+        categoryList.appendChild(btn);
+      });
+    }
+
+    function goBackToSubjectDisplay() {
+      document.getElementById("categoryDisplay").classList.add("hidden");
+      document.getElementById("subjectDisplay").classList.remove("hidden");
+    }
+
+    function showVideos(category) {
+      selectedCategory = category;
+      document.getElementById("categoryDisplay").classList.add("hidden");
+      document.getElementById("videoSection").classList.remove("hidden");
+      document.getElementById("sectionTitle").textContent = `${category} for ${selectedClass} - ${selectedSubject}`;
+      const videoGrid = document.getElementById("videoGrid");
+      videoGrid.innerHTML = "";
+      currentVideos = (((videos[selectedBatch] || {})[selectedClass] || {})[selectedSubject] || {})[selectedCategory] || [];
+      renderVideos(currentVideos);
+    }
+
+    function goBackToCategoryDisplay() {
+      document.getElementById("videoSection").classList.add("hidden");
+      document.getElementById("categoryDisplay").classList.remove("hidden");
+    }
+
+    function resetSelection() {
+      selectedBatch = selectedClass = selectedSubject = selectedCategory = "";
+      document.getElementById("videoSection").classList.add("hidden");
+      document.getElementById("categoryDisplay").classList.add("hidden");
+      document.getElementById("subjectDisplay").classList.add("hidden");
+      document.getElementById("batchDisplay").classList.add("hidden");
+      document.getElementById("batchSelection").classList.remove("hidden");
+    }
+
+    function renderVideos(videoList) {
+      const videoGrid = document.getElementById("videoGrid");
+      videoGrid.innerHTML = "";
+      videoList.forEach(video => {
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-lg shadow-lg p-6";
+        const link = document.createElement("a");
+        link.href = video.link;
+        link.target = "_blank";
+        const img = document.createElement("img");
+        img.src = video.thumbnail;
+        img.alt = video.title;
+        img.className = "w-full rounded-md mb-4";
+        const title = document.createElement("div");
+title.textContent = video.title;
+title.className = "text-center text-lg font-bold text-red- font-serif";
+
+        link.appendChild(img);
+        card.appendChild(link);
+        card.appendChild(title);
+        videoGrid.appendChild(card);
+      });
+    }
+
+    function filterResources() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const filteredVideos = currentVideos.filter(video =>
+        video.title.toLowerCase().includes(query)
+      );
+      renderVideos(filteredVideos);
+    }
+
+
+
+
+
+  
+   
+
+</script>
+
+</body>
+</html>
